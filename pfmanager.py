@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import requests
+import time
 
 
 class PfManager:
@@ -34,14 +35,23 @@ class PfManager:
         if self.show_result:
             print r.text
 
-    def add_record(self, title, comment='', thumbname=''):
-        reg_data = {
-            'name': title,
+    def add_record(self, name, comment='', thumbname='', thumbpath=''):
+        data = {
+            'name': name,
             'comment': comment,
             'dir': 'img',
+            'caption': thumbname,
             'method': 'do_reg'
         }
-        r = self.session.post(self.REGISTER_URL, data=reg_data)
+        files = {
+            'thumbfile': (thumbname, open(thumbpath, 'rb'), 'image/png'),
+        }
+        r = self.session.post(self.REGISTER_URL, data=data, files=files)
+        print r.headers
+
+        if r.status_code != 200:
+            print 'Error: add failed.'
+            return
 
         if self.show_result:
             print r.text
@@ -49,7 +59,10 @@ class PfManager:
 
 if __name__ == '__main__':
     pfm = PfManager()
-    pfm.add_record('test6', 'comment6')
-
-
-
+    example = {
+        'name': '040823_3_sn',
+        'comment': time.strftime('%X %x'),
+        'thumbname': '040823_3_sn.jpg',
+        'thumbpath': './data_example/040823_3_sn/img/040823_3_sn.jpg'
+    }
+    pfm.add_record(**example)
