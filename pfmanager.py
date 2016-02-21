@@ -12,6 +12,7 @@ class PfManager:
     BASE_URL = 'http://192.168.0.249/xoops/'
     LOGIN_URL = BASE_URL+'user.php'
     REGISTER_URL = BASE_URL+'modules/newdb/register.php'
+    DELETE_URL = BASE_URL+'modules/newdb/config.php'
 
     def __init__(self):
         self.login_info = {'uname': 'automoth',
@@ -48,12 +49,20 @@ class PfManager:
             'thumbfile': (thumbname, open(thumbpath, 'rb'), 'image/png'),
         }
         r = self.session.post(self.REGISTER_URL, data=data, files=files)
-        print r.headers
 
         if r.status_code != 200:
             print 'Error: add failed.'
             return
 
+        if self.show_result:
+            print r.text
+
+    def del_record(self, id):
+        data = {
+            'lid': id,
+            'mode': 'do_ddel'
+        }
+        r = self.session.post(self.DELETE_URL, data=data)
         if self.show_result:
             print r.text
 
@@ -70,4 +79,6 @@ if __name__ == '__main__':
         'uploaded_data': '030504_1_sn',
         'keywords': {'5', '6'}
     }
-    pfm.add_record(**example)
+    # pfm.add_record(**example)
+    pfm.del_record(1422)
+
