@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import requests
 import time
 
@@ -24,9 +23,9 @@ class PfManager:
 
         passfile = open(self.PASSWORD_FILE, 'r')
         self.login_info['pass'] = passfile.read()
-        self.login()
+        self._login()
 
-    def login(self):
+    def _login(self):
         self.session = requests.Session()
         self.session.headers.update({'referer': self.REGISTER_URL})
         print self.login_info
@@ -35,14 +34,15 @@ class PfManager:
         if self.show_result:
             print r.text
 
-    def add_record(self, name, comment='', thumbname='', thumbpath='', uploaded_data=''):
+    def add_record(self, name, comment='', thumbname='', thumbpath='', uploaded_data='', keywords=''):
         data = {
             'name': name,
             'comment': comment,
             'dir': 'img',
             'caption': thumbname,
-            'method': 'do_reg',
-            'uploaded_data': uploaded_data
+            'uploaded_data': uploaded_data,
+            'kw[]': keywords,
+            'method': 'do_reg'
         }
         files = {
             'thumbfile': (thumbname, open(thumbpath, 'rb'), 'image/png'),
@@ -57,6 +57,8 @@ class PfManager:
         if self.show_result:
             print r.text
 
+    def get_keywordtree(self):
+        pass
 
 if __name__ == '__main__':
     pfm = PfManager()
@@ -65,6 +67,7 @@ if __name__ == '__main__':
         'comment': time.strftime('%X %x'),
         'thumbname': '040823_3_sn.jpg',
         'thumbpath': './data_example/040823_3_sn/img/040823_3_sn.jpg',
-        'uploaded_data': '030504_1_sn'
+        'uploaded_data': '030504_1_sn',
+        'keywords': {'5', '6'}
     }
     pfm.add_record(**example)
