@@ -35,13 +35,14 @@ class PfManager:
         if self.show_result:
             print r.text
 
-    def add_record(self, name, comment='', thumbname='', thumbpath=''):
+    def add_record(self, name, comment='', thumbname='', thumbpath='', uploaded_data=''):
         data = {
             'name': name,
             'comment': comment,
             'dir': 'img',
             'caption': thumbname,
-            'method': 'do_reg'
+            'method': 'do_reg',
+            'uploaded_data': uploaded_data
         }
         files = {
             'thumbfile': (thumbname, open(thumbpath, 'rb'), 'image/png'),
@@ -63,6 +64,7 @@ if __name__ == '__main__':
         'name': '040823_3_sn',
         'comment': time.strftime('%X %x'),
         'thumbname': '040823_3_sn.jpg',
-        'thumbpath': './data_example/040823_3_sn/img/040823_3_sn.jpg'
+        'thumbpath': './data_example/040823_3_sn/img/040823_3_sn.jpg',
+        'uploaded_data': '030504_1_sn'
     }
     pfm.add_record(**example)
