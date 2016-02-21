@@ -38,7 +38,7 @@ class PfManager:
         data = {
             'name': name,
             'comment': comment,
-            'dir': 'img',
+            'dir': 'mor',
             'caption': thumbname,
             'uploaded_data': uploaded_data,
             'kw[]': keywords,
