@@ -48,6 +48,8 @@ class PfManager:
             'kw[]': keywords,
             'method': 'do_reg'
         }
+        print 'thumbpath: '+thumbpath
+        thumbpath = u'100303_3.f.snapshot.jpg'
         files = {
             'thumbfile': (thumbname, open(thumbpath, 'rb'), 'image/png'),
         }
@@ -61,21 +63,40 @@ class PfManager:
             print r.text
 
     def get_record(self, id):
+        data = {
+            'name': '',
+            'comment': 'BoND ID: '+str(id)+'<br />',
+            'thumbname': '',
+            'thumbpath': '',
+        }
         r = self.session.get(self.DETAIL_URL+'?id='+str(id))
 
         if self.show_result:
             print r.text
 
         soup = BeautifulSoup.BeautifulSoup(r.text)
+
+        text = soup.find(id='data_name').string
+        if text is not None:
+            data['name'] = text.strip()
+
+        text = soup.find('img').string
+        print text
+        if text is not None:
+            data['comment'] += text.strip()
+
         for record in soup.findAll('img'):
             if 'extract' in record.get('src'):
-                print record.get('src')
                 filename = record.get('src').split('/')[-1]
-                print filename
+                if data['thumbpath'] == '':
+                    data['thumbname'] = filename
+                    data['thumbpath'] = filename
+
                 with open('./'+filename, 'wb') as f:
                     raw = self.session.get(record.get('src')).content
                     f.write(raw)
 
+        return data
 
     def del_record(self, id):
         data = {
@@ -104,10 +125,15 @@ if __name__ == '__main__':
         'uploaded_data': '030504_1_sn',
         'keywords': {'5', '6'}
     }
-    #pfm.add_record(**example)
 
     # for i in range(1425, 1430):
     #     pfm.del_record(i)
 
-    pfm.get_record('932')
+    data = pfm.get_record('1384')
+    #pfm.get_record('932')
+
+    #pfm.add_record(**example)
+    print data
+    data['uploaded_data'] = u'030504_1_sn/model'
+    pfm.add_record(**data)
 
