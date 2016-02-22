@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import requests
-import time
 import BeautifulSoup
 
 
@@ -10,13 +9,14 @@ class PfManager:
     """
 
     PASSWORD_FILE = 'password.txt'
-    BASE_URL = 'http://192.168.0.249/xoops/'
-    LOGIN_URL = BASE_URL+'user.php'
-    REGISTER_URL = BASE_URL+'modules/newdb/register.php'
-    DETAIL_URL = BASE_URL+'modules/newdb/detail.php'
-    DELETE_URL = BASE_URL+'modules/newdb/config.php'
+    LOGIN_URL = 'user.php'
+    REGISTER_URL = 'register.php'
+    DETAIL_URL = 'detail.php'
+    DELETE_URL = 'config.php'
 
-    def __init__(self):
+    def __init__(self, base_url='http://192.168.0.249/xoops/', db_name='newdb'):
+        self.base_url = base_url
+        self.db_name = db_name+'/'
         self.login_info = {'uname': 'automoth',
                            'pass': '******',
                            'op': 'login'
@@ -31,9 +31,9 @@ class PfManager:
 
     def _login(self):
         self.session = requests.Session()
-        self.session.headers.update({'referer': self.REGISTER_URL})
+        self.session.headers.update({'referer': self.base_url + 'modules/' + self.db_name + self.REGISTER_URL})
         print self.login_info
-        r = self.session.post(self.LOGIN_URL, data=self.login_info)
+        r = self.session.post(self.base_url + self.LOGIN_URL, data=self.login_info)
 
         if self.show_result:
             print r.text
@@ -48,12 +48,10 @@ class PfManager:
             'kw[]': keywords,
             'method': 'do_reg'
         }
-        print 'thumbpath: '+thumbpath
-        thumbpath = u'100303_3.f.snapshot.jpg'
         files = {
             'thumbfile': (thumbname, open(thumbpath, 'rb'), 'image/png'),
         }
-        r = self.session.post(self.REGISTER_URL, data=data, files=files)
+        r = self.session.post(self.base_url + 'modules/' + self.db_name + self.REGISTER_URL, data=data, files=files)
 
         if r.status_code != 200:
             print 'Error: add failed.'
@@ -65,11 +63,11 @@ class PfManager:
     def get_record(self, id):
         data = {
             'name': '',
-            'comment': 'BoND ID: '+str(id)+'<br />',
+            'comment': 'BoND ID: '+str(id)+'\n',
             'thumbname': '',
             'thumbpath': '',
         }
-        r = self.session.get(self.DETAIL_URL+'?id='+str(id))
+        r = self.session.get(self.base_url + 'modules/' + self.db_name + self.DETAIL_URL+'?id='+str(id))
 
         if self.show_result:
             print r.text
@@ -80,11 +78,12 @@ class PfManager:
         if text is not None:
             data['name'] = text.strip()
 
-        text = soup.find('img').string
-        print text
+        '''
+        FIX:
+        text = soup.find(id='data_comment').td
         if text is not None:
             data['comment'] += text.strip()
-
+        '''
         for record in soup.findAll('img'):
             if 'extract' in record.get('src'):
                 filename = record.get('src').split('/')[-1]
@@ -103,7 +102,7 @@ class PfManager:
             'lid': id,
             'mode': 'do_ddel'
         }
-        r = self.session.post(self.DELETE_URL, data=data)
+        r = self.session.post(self.base_url + 'modules/' + self.db_name + self.DELETE_URL, data=data)
         if self.show_result:
             print r.text
 
@@ -117,6 +116,9 @@ class PfManager:
 
 if __name__ == '__main__':
     pfm = PfManager()
+    ivbpfm = PfManager(base_url='https://invbrain.neuroinf.jp/', db_name='newdb5')
+
+    '''
     example = {
         'name': '040823_3_sn',
         'comment': time.strftime('%X %x'),
@@ -125,15 +127,21 @@ if __name__ == '__main__':
         'uploaded_data': '030504_1_sn',
         'keywords': {'5', '6'}
     }
+    '''
 
     # for i in range(1425, 1430):
     #     pfm.del_record(i)
 
-    data = pfm.get_record('1384')
+    data = pfm.get_record('1380')
     #pfm.get_record('932')
 
     #pfm.add_record(**example)
     print data
-    data['uploaded_data'] = u'030504_1_sn/model'
-    pfm.add_record(**data)
+    data['uploaded_data'] = u''
+    data['keywords'] = {'135'}
+
+    #pfm.add_record(**data)
+    ivbpfm.add_record(**data)
+
+
 
