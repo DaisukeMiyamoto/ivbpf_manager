@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import requests
 import time
+import BeautifulSoup
 
 
 class PfManager:
@@ -12,6 +13,7 @@ class PfManager:
     BASE_URL = 'http://192.168.0.249/xoops/'
     LOGIN_URL = BASE_URL+'user.php'
     REGISTER_URL = BASE_URL+'modules/newdb/register.php'
+    DETAIL_URL = BASE_URL+'modules/newdb/detail.php'
     DELETE_URL = BASE_URL+'modules/newdb/config.php'
 
     def __init__(self):
@@ -25,6 +27,7 @@ class PfManager:
         passfile = open(self.PASSWORD_FILE, 'r')
         self.login_info['pass'] = passfile.read()
         self._login()
+
 
     def _login(self):
         self.session = requests.Session()
@@ -57,6 +60,23 @@ class PfManager:
         if self.show_result:
             print r.text
 
+    def get_record(self, id):
+        r = self.session.get(self.DETAIL_URL+'?id='+str(id))
+
+        if self.show_result:
+            print r.text
+
+        soup = BeautifulSoup.BeautifulSoup(r.text)
+        for record in soup.findAll('img'):
+            if 'extract' in record.get('src'):
+                print record.get('src')
+                filename = record.get('src').split('/')[-1]
+                print filename
+                with open('./'+filename, 'wb') as f:
+                    raw = self.session.get(record.get('src')).content
+                    f.write(raw)
+
+
     def del_record(self, id):
         data = {
             'lid': id,
@@ -69,6 +89,11 @@ class PfManager:
     def get_keywordtree(self):
         pass
 
+    def make_archive(self, name, filepath):
+        pass
+        # archive = zipfile.ZipFile('./'.name+'.tar.gz', 'w', filepath, zipfile.ZIP_DEFLATED)
+        # archive.write('')
+
 if __name__ == '__main__':
     pfm = PfManager()
     example = {
@@ -79,6 +104,10 @@ if __name__ == '__main__':
         'uploaded_data': '030504_1_sn',
         'keywords': {'5', '6'}
     }
-    # pfm.add_record(**example)
-    pfm.del_record(1422)
+    #pfm.add_record(**example)
+
+    # for i in range(1425, 1430):
+    #     pfm.del_record(i)
+
+    pfm.get_record('932')
 
