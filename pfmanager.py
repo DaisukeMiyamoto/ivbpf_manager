@@ -33,7 +33,6 @@ class PfManager:
     def _login(self):
         self.session = requests.Session()
         self.session.headers.update({'referer': self.base_url + 'modules/' + self.db_name + self.REGISTER_URL})
-        print self.login_info
         r = self.session.post(self.base_url + self.LOGIN_URL, data=self.login_info)
 
         if self.show_result:
@@ -68,6 +67,7 @@ class PfManager:
             'comment': 'BoND ID: '+str(id)+'\n',
             'thumbname': '',
             'thumbpath': '',
+            'keywords': []
         }
         r = self.session.get(self.base_url + 'modules/' + self.db_name + self.DETAIL_URL+'?id='+str(id))
 
@@ -76,16 +76,29 @@ class PfManager:
 
         soup = BeautifulSoup.BeautifulSoup(r.text)
 
+        # get data name
         text = soup.find(id='data_name').string
         if text is not None:
             data['name'] = text.strip()
 
+
+        # get comment
         '''
         FIX:
         text = soup.find(id='data_comment').td
         if text is not None:
             data['comment'] += text.strip()
         '''
+
+        # get keywords
+        for record in soup.findAll('span'):
+            for attrs in record.attrs:
+                if attrs[0] == 'keyword_id':
+                    print attrs[1]
+                    data['keywords'].append(str(attrs[1]))
+                    
+
+        # get thumbnail image
         for record in soup.findAll('img'):
             if 'extract' in record.get('src'):
                 filename = record.get('src').split('/')[-1]
@@ -117,6 +130,28 @@ class PfManager:
         # archive.write('')
 
 if __name__ == '__main__':
+
+    def exec_by_file(pfm, ivbpfm):
+        filename = '/home/nebula/work/ivbpf/uploadtable20160108.txt'
+        reader = csv.reader(open(filename))
+
+        for record in reader:
+            data = pfm.get_record(str(record[0]))
+            #print data
+            data['uploaded_data'] = u''
+            data['keywords'] = {'134'}
+            
+            #pfm.add_record(**data)
+            print 'Register: ' + data['name'] + '(' + record[0] + ')'
+            ivbpfm.add_record(**data)
+
+    def exec_one_record(pfm, ivbpfm, dbid):
+            data = pfm.get_record(dbid)
+            #ivbpfm.add_record(**data)
+
+
+
+
     pfm = PfManager()
     ivbpfm = PfManager(base_url='https://invbrain.neuroinf.jp/html_test/', db_name='newdb5')
 
@@ -134,18 +169,10 @@ if __name__ == '__main__':
     # for i in range(1425, 1430):
     #     pfm.del_record(i)
 
-    filename = '/home/nebula/work/ivbpf/uploadtable20160108.txt'
-    reader = csv.reader(open(filename))
+    dbid = '1382'
 
-    for record in reader:
-        data = pfm.get_record(str(record[0]))
-        #print data
-        data['uploaded_data'] = u''
-        data['keywords'] = {'134'}
+    exec_one_record(pfm, ivbpfm, dbid)
 
-        #pfm.add_record(**data)
-        print 'Register: ' + data['name'] + '(' + record[0] + ')'
-        ivbpfm.add_record(**data)
 
 
 
