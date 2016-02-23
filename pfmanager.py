@@ -83,12 +83,10 @@ class PfManager:
 
 
         # get comment
-        '''
-        FIX:
-        text = soup.find(id='data_comment').td
+        text = soup.find(id='data_comment').text
         if text is not None:
+            print text
             data['comment'] += text.strip()
-        '''
 
         # get keywords
         for record in soup.findAll('span'):
@@ -169,7 +167,7 @@ if __name__ == '__main__':
     # for i in range(1425, 1430):
     #     pfm.del_record(i)
 
-    dbid = '1382'
+    dbid = '1384'
 
     exec_one_record(pfm, ivbpfm, dbid)
 
