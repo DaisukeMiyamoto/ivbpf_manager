@@ -15,7 +15,7 @@ class PfManager:
     DETAIL_URL = 'detail.php'
     DELETE_URL = 'config.php'
 
-    def __init__(self, base_url='http://192.168.0.249/xoops/', db_name='newdb'):
+    def __init__(self, base_url='http://192.168.0.249/xoops/', db_name='newdb', keyword_table_file=''):
         self.base_url = base_url
         self.db_name = db_name+'/'
         self.login_info = {'uname': 'automoth',
@@ -24,10 +24,16 @@ class PfManager:
                            }
         self.session = None
         self.show_result = False
+        self.keyword_table = {}
 
         passfile = open(self.PASSWORD_FILE, 'r')
         self.login_info['pass'] = passfile.read()
         self._login()
+
+        if keyword_table_file != '':
+            reader = csv.reader(open(keyword_table_file))
+            for record in reader:
+                self.keyword_table[record[0]] = {'name':record[1], 'converted':record[2]}
 
 
     def _login(self):
@@ -37,6 +43,7 @@ class PfManager:
 
         if self.show_result:
             print r.text
+
 
     def add_record(self, name, comment='', thumbname='', thumbpath='', uploaded_data='', keywords=''):
         data = {
@@ -48,6 +55,7 @@ class PfManager:
             'kw[]': keywords,
             'method': 'do_reg'
         }
+        print(data)
         files = {
             'thumbfile': (thumbname, open(thumbpath, 'rb'), 'image/png'),
         }
@@ -57,14 +65,17 @@ class PfManager:
             print 'Error: add failed.'
             return
 
-        print r.text
+        soup = BeautifulSoup.BeautifulSoup(r.text)
+        print(soup.find('h4').text.strip())
+
         if self.show_result:
             print r.text
+
 
     def get_record(self, id):
         data = {
             'name': '',
-            'comment': 'BoND ID: '+str(id)+'\n',
+            'comment': 'BoND_ID('+str(id)+')\n',
             'thumbname': '',
             'thumbpath': '',
             'keywords': []
@@ -85,14 +96,13 @@ class PfManager:
         # get comment
         text = soup.find(id='data_comment').text
         if text is not None:
-            print text
             data['comment'] += text.strip()
 
         # get keywords
         for record in soup.findAll('span'):
             for attrs in record.attrs:
                 if attrs[0] == 'keyword_id':
-                    print attrs[1]
+                    #print attrs[1]
                     data['keywords'].append(str(attrs[1]))
                     
 
@@ -110,6 +120,7 @@ class PfManager:
 
         return data
 
+
     def del_record(self, id):
         data = {
             'lid': id,
@@ -119,13 +130,25 @@ class PfManager:
         if self.show_result:
             print r.text
 
+
     def get_keywordtree(self):
         pass
+
 
     def make_archive(self, name, filepath):
         pass
         # archive = zipfile.ZipFile('./'.name+'.tar.gz', 'w', filepath, zipfile.ZIP_DEFLATED)
         # archive.write('')
+
+
+    def convert_keyword(self, keywords):
+        ret = []
+        for key in keywords:
+            if self.keyword_table[key]['converted'] != '0':
+                ret.append(self.keyword_table[key]['converted'])
+
+        return ret
+
 
 if __name__ == '__main__':
 
@@ -135,23 +158,24 @@ if __name__ == '__main__':
 
         for record in reader:
             data = pfm.get_record(str(record[0]))
-            #print data
             data['uploaded_data'] = u''
-            data['keywords'] = {'134'}
+            #data['keywords'] = {'134'}
             
             #pfm.add_record(**data)
+            data['keywords'] = ivbpfm.convert_keyword(data['keywords'])
+
             print 'Register: ' + data['name'] + '(' + record[0] + ')'
             ivbpfm.add_record(**data)
 
     def exec_one_record(pfm, ivbpfm, dbid):
             data = pfm.get_record(dbid)
-            #ivbpfm.add_record(**data)
-
-
+            data['keywords'] = ivbpfm.convert_keyword(data['keywords'])
+            data['uploaded_data'] = dbid + '/data/'
+            ivbpfm.add_record(**data)
 
 
     pfm = PfManager()
-    ivbpfm = PfManager(base_url='https://invbrain.neuroinf.jp/html_test/', db_name='newdb5')
+    ivbpfm = PfManager(base_url='https://invbrain.neuroinf.jp/html_test/', db_name='newdb5', keyword_table_file='/home/nebula/work/ivbpf/table.csv')
 
     '''
     example = {
@@ -167,7 +191,7 @@ if __name__ == '__main__':
     # for i in range(1425, 1430):
     #     pfm.del_record(i)
 
-    dbid = '1384'
+    dbid = '1355'
 
     exec_one_record(pfm, ivbpfm, dbid)
 
