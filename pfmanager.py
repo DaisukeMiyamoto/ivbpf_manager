@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import requests
 import BeautifulSoup
+import csv
 
 
 class PfManager:
@@ -22,7 +23,7 @@ class PfManager:
                            'op': 'login'
                            }
         self.session = None
-        self.show_result = True
+        self.show_result = False
 
         passfile = open(self.PASSWORD_FILE, 'r')
         self.login_info['pass'] = passfile.read()
@@ -57,6 +58,7 @@ class PfManager:
             print 'Error: add failed.'
             return
 
+        print r.text
         if self.show_result:
             print r.text
 
@@ -116,7 +118,7 @@ class PfManager:
 
 if __name__ == '__main__':
     pfm = PfManager()
-    ivbpfm = PfManager(base_url='https://invbrain.neuroinf.jp/', db_name='newdb5')
+    ivbpfm = PfManager(base_url='https://invbrain.neuroinf.jp/html_test/', db_name='newdb5')
 
     '''
     example = {
@@ -132,16 +134,18 @@ if __name__ == '__main__':
     # for i in range(1425, 1430):
     #     pfm.del_record(i)
 
-    data = pfm.get_record('1380')
-    #pfm.get_record('932')
+    filename = '/home/nebula/work/ivbpf/uploadtable20160108.txt'
+    reader = csv.reader(open(filename))
 
-    #pfm.add_record(**example)
-    print data
-    data['uploaded_data'] = u''
-    data['keywords'] = {'135'}
+    for record in reader:
+        data = pfm.get_record(str(record[0]))
+        #print data
+        data['uploaded_data'] = u''
+        data['keywords'] = {'134'}
 
-    #pfm.add_record(**data)
-    ivbpfm.add_record(**data)
+        #pfm.add_record(**data)
+        print 'Register: ' + data['name'] + '(' + record[0] + ')'
+        ivbpfm.add_record(**data)
 
 
 
