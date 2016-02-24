@@ -152,20 +152,11 @@ class PfManager:
 
 if __name__ == '__main__':
 
-    def exec_by_file(pfm, ivbpfm):
-        filename = '/home/nebula/work/ivbpf/uploadtable20160108.txt'
+    def exec_by_file(pfm, ivbpfm, filename):
         reader = csv.reader(open(filename))
 
         for record in reader:
-            data = pfm.get_record(str(record[0]))
-            data['uploaded_data'] = u''
-            #data['keywords'] = {'134'}
-            
-            #pfm.add_record(**data)
-            data['keywords'] = ivbpfm.convert_keyword(data['keywords'])
-
-            print 'Register: ' + data['name'] + '(' + record[0] + ')'
-            ivbpfm.add_record(**data)
+            exec_one_record(pfm, ivbpfm, record[0])
 
     def exec_one_record(pfm, ivbpfm, dbid):
             data = pfm.get_record(dbid)
@@ -175,7 +166,7 @@ if __name__ == '__main__':
 
 
     pfm = PfManager()
-    ivbpfm = PfManager(base_url='https://invbrain.neuroinf.jp/html_test/', db_name='newdb5', keyword_table_file='/home/nebula/work/ivbpf/table.csv')
+    ivbpfm = PfManager(base_url='https://invbrain.neuroinf.jp/', db_name='newdb5', keyword_table_file='/home/nebula/work/ivbpf/table.csv')
 
     '''
     example = {
@@ -191,10 +182,11 @@ if __name__ == '__main__':
     # for i in range(1425, 1430):
     #     pfm.del_record(i)
 
-    dbid = '1355'
+    #dbid = '1355'
+    #exec_one_record(pfm, ivbpfm, dbid)
 
-    exec_one_record(pfm, ivbpfm, dbid)
-
+    filename = '/home/nebula/work/ivbpf/upload20160224_2.txt'
+    exec_by_file(pfm, ivbpfm, filename)
 
 
 
