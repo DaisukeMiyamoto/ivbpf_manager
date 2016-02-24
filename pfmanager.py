@@ -179,8 +179,8 @@ if __name__ == '__main__':
     }
     '''
 
-    # for i in range(1425, 1430):
-    #     pfm.del_record(i)
+    #for i in range(574, 730):
+    #    ivbpfm.del_record(i)
 
     #dbid = '1355'
     #exec_one_record(pfm, ivbpfm, dbid)
