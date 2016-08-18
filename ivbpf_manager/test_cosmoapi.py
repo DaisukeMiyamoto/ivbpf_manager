@@ -53,6 +53,11 @@ class CosmoAPIClient:
 
         return r.text
 
+    def get_thumbnail(self, uri, filename):
+        with open(filename, 'wb') as f:
+            raw = self.session.get(uri).content
+            f.write(raw)
+
 
 if __name__ == '__main__':
     url = 'https://invbrain.neuroinf.jp/'
