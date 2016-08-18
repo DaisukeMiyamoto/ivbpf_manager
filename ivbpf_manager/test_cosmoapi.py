@@ -1,8 +1,7 @@
-# -*- coding:utf-8 -*-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import requests
 from xml.etree import ElementTree
-# import BeautifulSoup
-# import csv
 
 
 class CosmoAPIClient:
