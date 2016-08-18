@@ -158,7 +158,8 @@ if __name__ == '__main__':
 
     pfm = PfManager()
     ivbpfm = PfManager(base_url='https://invbrain.neuroinf.jp/', db_name='newdb5',
-                       keyword_table_file='/home/nebula/work/ivbpf/table.csv')
+                       keyword_table_file='ivbpf_table.csv')
+    ivbpfm.show_result = True
 
     '''
     example = {
@@ -177,5 +178,5 @@ if __name__ == '__main__':
     # dbid = '1355'
     # exec_one_record(pfm, ivbpfm, dbid)
 
-    filename = '/home/nebula/work/ivbpf/upload20160224_2.txt'
-    exec_by_file(pfm, ivbpfm, filename)
+    # filename = '/home/nebula/work/ivbpf/upload20160224_2.txt'
+    # exec_by_file(pfm, ivbpfm, filename)
