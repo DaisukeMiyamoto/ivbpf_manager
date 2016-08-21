@@ -74,34 +74,29 @@ class XnpExcel:
         self.wb.save(filename=xls_filename)
 
 if __name__ == '__main__':
-    url = 'https://invbrain.neuroinf.jp/'
-    db_name = 'newdb1'
-    local_img_dir = 'img'
-    capi = CosmoAPIClient(url, db_name, debug=False)
-    listxml = capi.get_list()
 
-    root = ElementTree.fromstring(listxml.encode('utf-8'))
+    def detail2record(data_id, download_thumbnails=True):
+        local_img_dir = 'img'
 
-    record_list = []
-    # detailxml_all = {}
-    thumbnail_list = []
-
-    for child in root[1]:
-        detailxml = capi.get_detail(int(child.attrib['data_id']))
-        # detailxml_all[child.attrib['data_id']] = detailxml
+        detailxml = capi.get_detail(data_id)
 
         print detailxml
         detail_root = ElementTree.fromstring(detailxml.encode('utf-8'))
 
         print detail_root[0][0].text
 
+        # thumbnail
         thumbnail_path_list = []
         for thumbnail in detail_root[0][6]:
-            print thumbnail.text
+            # print thumbnail.text
             dirname = os.path.join('.', local_img_dir, str(detail_root[0].attrib['data_id']))
             if not os.path.isdir(dirname):
                 os.makedirs(dirname)
             filename = os.path.join(dirname, thumbnail.text.split('/')[-1])
+
+            if download_thumbnails:
+                # FIX: have to refactor
+                capi.get_thumbnail(thumbnail.text, filename)
             # FIX: same filename in different dir
             thumbnail_path_list.append(filename)
 
@@ -110,7 +105,13 @@ if __name__ == '__main__':
         for path in thumbnail_path_list:
             thumbnail_path += path + '\n'
 
+        # keywords
+        keyword_all = ''
+        for keyword in detail_root[0][5]:
+            keyword_all += keyword.text
+
         record = {'title': detail_root[0][0].text,
+                  'keywords': keyword_all,
                   'date': detail_root[0][2].text.replace('-', '/'),
                   'data_type': 'other',
                   'experimenters': detail_root[0][1].text,
@@ -122,7 +123,21 @@ if __name__ == '__main__':
                   'rights': 'CC-BY',
                   'index': '/Public/Data\n/Private/Data\n/Private/BrainAtlas'
                   }
+        return record
 
+
+    url = 'https://invbrain.neuroinf.jp/'
+    db_name = 'newdb1'
+    capi = CosmoAPIClient(url, db_name, debug=False)
+    listxml = capi.get_list()
+
+    root = ElementTree.fromstring(listxml.encode('utf-8'))
+
+    record_list = []
+    thumbnail_list = []
+
+    for child in root[1]:
+        record = detail2record(int(child.attrib['data_id']), download_thumbnails=False)
         record_list.append(record)
 
     xls_filename = 'test.xls'
