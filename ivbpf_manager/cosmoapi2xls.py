@@ -7,6 +7,9 @@ import os
 
 
 class XnpExcel:
+    """
+    Export IVBPF (CosmoDB) data to Excel file for excel2xoonips
+    """
     def __init__(self, xls_filename):
         self.wb = opx.Workbook()
         self.ws = self.wb.active
