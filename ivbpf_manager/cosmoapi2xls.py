@@ -75,7 +75,7 @@ class XnpExcel:
 
 if __name__ == '__main__':
 
-    def detail2record(data_id, download_thumbnails=True):
+    def detail2record(capi, data_id, download_thumbnails=True):
         local_img_dir = 'img'
 
         detailxml = capi.get_detail(data_id)
@@ -137,7 +137,7 @@ if __name__ == '__main__':
     thumbnail_list = []
 
     for child in root[1]:
-        record = detail2record(int(child.attrib['data_id']), download_thumbnails=False)
+        record = detail2record(capi, int(child.attrib['data_id']), download_thumbnails=False)
         record_list.append(record)
 
     xls_filename = 'test.xls'
