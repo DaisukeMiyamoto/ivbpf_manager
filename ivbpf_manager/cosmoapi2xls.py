@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from test_cosmoapi import CosmoAPIClient
+from CosmoAPIClient import CosmoAPIClient
 from xml.etree import ElementTree
 import openpyxl as opx
 import os
@@ -80,12 +80,12 @@ if __name__ == '__main__':
     root = ElementTree.fromstring(listxml.encode('utf-8'))
 
     record_list = []
-    detailxml_all = {}
+    # detailxml_all = {}
     thumbnail_list = []
 
     for child in root[1]:
         detailxml = capi.get_detail(int(child.attrib['data_id']))
-        detailxml_all[child.attrib['data_id']] = detailxml
+        # detailxml_all[child.attrib['data_id']] = detailxml
 
         print detailxml
         detail_root = ElementTree.fromstring(detailxml.encode('utf-8'))
