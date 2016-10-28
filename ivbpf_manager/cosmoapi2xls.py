@@ -10,7 +10,7 @@ class XnpExcel:
     """
     Export IVBPF (CosmoDB) data to Excel file for excel2xoonips
     """
-    def __init__(self, xls_filename):
+    def __init__(self):
         self.wb = opx.Workbook()
         self.ws = self.wb.active
         self.ws.title = 'data'
@@ -63,27 +63,27 @@ class XnpExcel:
             else:
                 record_fix.append('')
 
-        print record_fix
+        print(record_fix)
 
         for i, name in enumerate(record_fix):
             self.ws.cell(column=i+1, row=self.record_index, value=name)
 
         self.record_index += 1
 
-    def save(self):
+    def save(self, xls_filename):
         self.wb.save(filename=xls_filename)
 
 if __name__ == '__main__':
 
-    def detail2record(capi, data_id, download_thumbnails=True):
-        local_img_dir = 'img'
+    def detail2record(capi, data_id, settings, download_thumbnails=True):
+        local_img_dir = settings['local_tmp_dir']
 
         detailxml = capi.get_detail(data_id)
 
-        print detailxml
+        # print detailxml
         detail_root = ElementTree.fromstring(detailxml.encode('utf-8'))
 
-        print detail_root[0][0].text
+        # print detail_root[0][0].text
 
         # thumbnail
         thumbnail_path_list = []
@@ -110,6 +110,7 @@ if __name__ == '__main__':
         for keyword in detail_root[0][5]:
             keyword_all += keyword.text
 
+        # summarize
         record = {'title': detail_root[0][0].text,
                   'keywords': keyword_all,
                   'date': detail_root[0][2].text.replace('-', '/'),
@@ -121,14 +122,33 @@ if __name__ == '__main__':
                   'download_notification': 'FALSE',
                   'readme': 'README',
                   'rights': 'CC-BY',
-                  'index': '/Public/Data\n/Private/Data\n/Private/BrainAtlas'
+                  'index': '/Public/Data\n/Private/Data' + settings['additional_indexes']
                   }
+
         return record
 
+    # Setting Templates
+    settings_newdb1 = {
+        'url': 'https://invbrain.neuroinf.jp/',
+        'db_name': 'newdb1',
+        'output_filename': 'newdb1.xls',
+        'additional_indexes': '\n/Private/BrainAtlas\n/Public/BrainAtlas',
+        'local_tmp_dir': 'tmp'
+    }
 
-    url = 'https://invbrain.neuroinf.jp/'
-    db_name = 'newdb1'
-    capi = CosmoAPIClient(url, db_name, debug=False)
+    settings_newdb2 = {
+        'url': 'https://invbrain.neuroinf.jp/',
+        'db_name': 'newdb2',
+        'output_filename': 'newdb2.xls',
+        'additional_indexes': '\n/Private/Software\n/Public/Software',
+        'local_tmp_dir': 'tmp'
+    }
+
+    # choose settings
+    # settings = settings_newdb1
+    settings = settings_newdb2
+
+    capi = CosmoAPIClient(settings['url'], settings['db_name'], debug=False)
     listxml = capi.get_list()
 
     root = ElementTree.fromstring(listxml.encode('utf-8'))
@@ -137,14 +157,12 @@ if __name__ == '__main__':
     thumbnail_list = []
 
     for child in root[1]:
-        record = detail2record(capi, int(child.attrib['data_id']), download_thumbnails=False)
+        record = detail2record(capi, int(child.attrib['data_id']), settings, download_thumbnails=False)
         record_list.append(record)
 
-    xls_filename = 'test.xls'
-
-    xnpxls = XnpExcel(xls_filename)
+    xnpxls = XnpExcel()
 
     for record in record_list:
         xnpxls.add_record(record)
 
-    xnpxls.save()
+    xnpxls.save(settings['output_filename'])

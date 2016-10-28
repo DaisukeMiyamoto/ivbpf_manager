@@ -5,3 +5,7 @@ management utils for IVBPF (Invertebrate Brain Platform)
 ### Prepare
 You need to write login password in 'password.txt' file.
 
+## Dependencies
+- requests
+- openpyxl
+
