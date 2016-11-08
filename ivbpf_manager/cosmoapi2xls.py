@@ -75,7 +75,7 @@ class XnpExcel:
 
 if __name__ == '__main__':
 
-    def detail2record(capi, data_id, settings, download_thumbnails=True):
+    def detail2record(capi, data_id, settings, download_files=True):
         detailxml = capi.get_detail(data_id)
 
         # print detailxml
@@ -116,6 +116,8 @@ if __name__ == '__main__':
 
             if subdirname == settings['thumbnail_dir']:
                 thumbnail_file = os.path.join(dirname, thumbnail.text.split('/')[-1])
+                if download_files:
+                    capi.get_file(thumbnail.text, thumbnail_file)
 
             else:
                 if not os.path.isdir(os.path.join(dirname, subdirname)):
@@ -123,6 +125,9 @@ if __name__ == '__main__':
 
                 filename = os.path.join(dirname, subdirname, thumbnail.text.split('/')[-1])
                 file_list.append(filename)
+                if download_files:
+                    capi.get_file(thumbnail.text, filename)
+
         file_list = list(set(file_list))
         filepath = ''
         for path in file_list:
@@ -187,7 +192,7 @@ if __name__ == '__main__':
     thumbnail_list = []
 
     for child in root[1]:
-        record = detail2record(capi, int(child.attrib['data_id']), settings, download_thumbnails=True)
+        record = detail2record(capi, int(child.attrib['data_id']), settings, download_files=True)
         record_list.append(record)
 
     xnpxls = XnpExcel()
