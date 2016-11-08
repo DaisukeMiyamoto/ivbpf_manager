@@ -28,19 +28,19 @@ class CosmoAPIClient:
         self.session = requests.Session()
         login_uri = self.base_url + self.MODULE_URI + (self.LOGIN % ('automoth', password))
         if self.debug:
-            print login_uri
+            print(login_uri)
         r = self.session.post(login_uri)
 
         if self.debug:
-            print r.text
+            print(r.text)
 
     def get_list(self):
         list_uri = self.base_url + self.MODULE_URI + (self.LIST % self.db_name)
         if self.debug:
-            print list_uri
+            print(list_uri)
         r = self.session.get(list_uri)
         if self.debug:
-            print r.text
+            print(r.text)
 
         return r.text
 
@@ -49,7 +49,7 @@ class CosmoAPIClient:
 
         r = self.session.get(get_uri)
         if self.debug:
-            print r.text
+            print(r.text)
 
         return r.text
 
@@ -57,6 +57,10 @@ class CosmoAPIClient:
         with open(filename, 'wb') as f:
             raw = self.session.get(uri).content
             f.write(raw)
+
+    def get_file(self, uri, filename):
+        self.get_thumbnail(uri, filename)
+
 
 
 if __name__ == '__main__':
@@ -68,7 +72,9 @@ if __name__ == '__main__':
     root = ElementTree.fromstring(listtext.encode('utf-8'))
 
     for child in root[1]:
-        print child.tag, child.attrib
+        print(child.tag, child.attrib)
 
     detailtext = capi.get_detail(59)
-    print detailtext
+    print(detailtext)
+
+

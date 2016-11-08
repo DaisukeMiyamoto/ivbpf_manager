@@ -76,16 +76,13 @@ class XnpExcel:
 if __name__ == '__main__':
 
     def detail2record(capi, data_id, settings, download_thumbnails=True):
-        local_img_dir = settings['local_tmp_dir']
-
         detailxml = capi.get_detail(data_id)
 
         # print detailxml
         detail_root = ElementTree.fromstring(detailxml.encode('utf-8'))
 
-        # print detail_root[0][0].text
-
         # thumbnail
+        '''
         thumbnail_path_list = []
         for thumbnail in detail_root[0][6]:
             # print thumbnail.text
@@ -104,26 +101,57 @@ if __name__ == '__main__':
         thumbnail_path = ''
         for path in thumbnail_path_list:
             thumbnail_path += path + '\n'
+        '''
+
+
+        # file/thumbnail
+        thumbnail_file = ''
+        file_list = []
+        for thumbnail in detail_root[0].find('.//thumbnails'):
+            dirname = os.path.join('.', settings['local_file_dir'], str(detail_root[0].attrib['data_id']))
+            subdirname = thumbnail.text.split('/')[-2]
+
+            if not os.path.isdir(dirname):
+                os.makedirs(dirname)
+
+            if subdirname == settings['thumbnail_dir']:
+                thumbnail_file = os.path.join(dirname, thumbnail.text.split('/')[-1])
+
+            else:
+                if not os.path.isdir(os.path.join(dirname, subdirname)):
+                    os.makedirs(os.path.join(dirname, subdirname))
+
+                filename = os.path.join(dirname, subdirname, thumbnail.text.split('/')[-1])
+                file_list.append(filename)
+        file_list = list(set(file_list))
+        filepath = ''
+        for path in file_list:
+            filepath += path + '\n'
+
 
         # keywords
         keyword_all = ''
-        for keyword in detail_root[0][5]:
+        for keyword in detail_root[0].find('.//keyword'):
             keyword_all += keyword.text
 
+        print(filepath)
         # summarize
-        record = {'title': detail_root[0][0].text,
+        record = {'title': detail_root[0].find('.//label').text,
                   'keywords': keyword_all,
-                  'date': detail_root[0][2].text.replace('-', '/'),
+                  'description': detail_root[0].find('.//comment').text,
+                  'date': detail_root[0].find('.//date').text.replace('-', '/'),
                   'data_type': 'other',
-                  'experimenters': detail_root[0][1].text,
-                  'preview': thumbnail_path.rstrip('\n'),
-                  'data_files': 'dummy.txt',
+                  'experimenters': detail_root.find('.//author').text,
+                  'preview': thumbnail_file.rstrip('\n'),
+                  'data_files': filepath,
                   'download_limitation': 'FALSE',
                   'download_notification': 'FALSE',
                   'readme': 'README',
                   'rights': 'CC-BY',
                   'index': '/Public/Data\n/Private/Data' + settings['additional_indexes']
                   }
+
+        print(record)
 
         return record
 
@@ -133,7 +161,8 @@ if __name__ == '__main__':
         'db_name': 'newdb1',
         'output_filename': 'newdb1.xls',
         'additional_indexes': '\n/Private/BrainAtlas\n/Public/BrainAtlas',
-        'local_tmp_dir': 'tmp'
+        'local_file_dir': 'tmp',
+        'thumbnail_dir': 'img'
     }
 
     settings_newdb2 = {
@@ -141,12 +170,13 @@ if __name__ == '__main__':
         'db_name': 'newdb2',
         'output_filename': 'newdb2.xls',
         'additional_indexes': '\n/Private/Software\n/Public/Software',
-        'local_tmp_dir': 'tmp'
+        'local_file_dir': 'tmp',
+        'thumbnail_dir': 'img'
     }
 
     # choose settings
-    # settings = settings_newdb1
-    settings = settings_newdb2
+    settings = settings_newdb1
+    # settings = settings_newdb2
 
     capi = CosmoAPIClient(settings['url'], settings['db_name'], debug=False)
     listxml = capi.get_list()
@@ -157,7 +187,7 @@ if __name__ == '__main__':
     thumbnail_list = []
 
     for child in root[1]:
-        record = detail2record(capi, int(child.attrib['data_id']), settings, download_thumbnails=False)
+        record = detail2record(capi, int(child.attrib['data_id']), settings, download_thumbnails=True)
         record_list.append(record)
 
     xnpxls = XnpExcel()
