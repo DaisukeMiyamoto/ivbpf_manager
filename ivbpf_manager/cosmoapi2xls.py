@@ -81,31 +81,19 @@ if __name__ == '__main__':
         # print detailxml
         detail_root = ElementTree.fromstring(detailxml.encode('utf-8'))
 
-        # thumbnail
-        '''
-        thumbnail_path_list = []
-        for thumbnail in detail_root[0][6]:
-            # print thumbnail.text
-            dirname = os.path.join('.', local_img_dir, str(detail_root[0].attrib['data_id']))
-            if not os.path.isdir(dirname):
-                os.makedirs(dirname)
-            filename = os.path.join(dirname, thumbnail.text.split('/')[-1])
 
-            if download_thumbnails:
-                # FIX: have to refactor
-                capi.get_thumbnail(thumbnail.text, filename)
-            # FIX: same filename in different dir
-            thumbnail_path_list.append(filename)
+        # label
+        title = detail_root[0].find('.//label').text
+        if title is None or title == ' ---':
+            title = settings['db_title'] + str(detail_root[0].attrib['data_id'])
 
-        thumbnail_path_list = list(set(thumbnail_path_list))
-        thumbnail_path = ''
-        for path in thumbnail_path_list:
-            thumbnail_path += path + '\n'
-        '''
-
+        # description
+        description = ''
+        if detail_root[0].find('.//comment') is not None and detail_root[0].find('.//comment').text is not None:
+            description = detail_root[0].find('.//comment').text.rstrip()
 
         # file/thumbnail
-        thumbnail_file = ''
+        thumbnail_file = u''
         file_list = []
         for thumbnail in detail_root[0].find('.//thumbnails'):
             dirname = os.path.join('.', settings['local_file_dir'], str(detail_root[0].attrib['data_id']))
@@ -132,29 +120,71 @@ if __name__ == '__main__':
         filepath = ''
         for path in file_list:
             filepath += path + '\n'
+        if len(file_list) == 0:
+            filepath = 'dummy.txt'
+        else:
+            filepath = file_list[0]
+
+
+        # experimenters
+        experimenters = detail_root.find('.//author').text
+        if experimenters is None:
+            experimenters = 'no data'
 
 
         # keywords
+        keyword_list = []
         keyword_all = ''
-        for keyword in detail_root[0].find('.//keyword'):
-            keyword_all += keyword.text
+        for metadata in detail_root[0].findall('.//component'):
+            if metadata.text is not None and metadata.text != '':
+                keyword_list.append(metadata.attrib['name'] + ': ' + metadata.text.replace('\n', ''))
 
-        print(filepath)
+        for keyword in detail_root[0].find('.//keywords'):
+            keyword_list.append(keyword.text)
+
+        keyword_list = list(set(keyword_list))
+        for keyword in keyword_list:
+            keyword_all += keyword + '\n'
+
+
+
+        # indexes
+        index_list = []
+        indexes = ''
+        index_list.append(settings['db_title'])
+        for keyword in detail_root[0].find('.//keywords'):
+            keyword_sep = keyword.text.split('/')
+            for i in range(1, len(keyword_sep)):
+                joined = ''.join(keyword_sep[0:i])
+                index_list.append(settings['db_title'] + '/Keyword/' + joined)
+
+            index_list.append(settings['db_title'] + '/Keyword/' + keyword.text)
+
+        index_list = list(set(index_list))
+
+        for index in index_list:
+            indexes += '/Private/'+index+'\n' + '/Public/'+index+'\n'
+
+
+
+
+
         # summarize
-        record = {'title': detail_root[0].find('.//label').text,
-                  'keywords': keyword_all,
-                  'description': detail_root[0].find('.//comment').text,
+        record = {'title': title,
+                  'keywords': keyword_all.rstrip('\n'),
+                  'description': description,
                   'date': detail_root[0].find('.//date').text.replace('-', '/'),
                   'data_type': 'other',
-                  'experimenters': detail_root.find('.//author').text,
-                  'preview': thumbnail_file.rstrip('\n'),
-                  'data_files': filepath,
+                  'experimenters': experimenters,
+                  'preview': thumbnail_file.replace('\\', '/').rstrip('\n'),
+                  'data_files': filepath.replace('\\', '/').rstrip('\n'),
                   'download_limitation': 'FALSE',
                   'download_notification': 'FALSE',
                   'readme': 'README',
                   'rights': 'CC-BY',
-                  'index': '/Public/Data\n/Private/Data' + settings['additional_indexes']
+                  'index': (indexes + settings['additional_indexes']).rstrip('\n')
                   }
+
 
         print(record)
 
@@ -164,23 +194,74 @@ if __name__ == '__main__':
     settings_newdb1 = {
         'url': 'https://invbrain.neuroinf.jp/',
         'db_name': 'newdb1',
-        'output_filename': 'newdb1.xls',
-        'additional_indexes': '\n/Private/BrainAtlas\n/Public/BrainAtlas',
-        'local_file_dir': 'tmp',
-        'thumbnail_dir': 'img'
+        'db_title': 'Brain Garalley',
+        'output_filename': 'newdb1.xlsx',
+        'additional_indexes': '',
+        'local_file_dir': 'newdb1',
+        'thumbnail_dir': 'img',
     }
 
     settings_newdb2 = {
         'url': 'https://invbrain.neuroinf.jp/',
         'db_name': 'newdb2',
-        'output_filename': 'newdb2.xls',
-        'additional_indexes': '\n/Private/Software\n/Public/Software',
-        'local_file_dir': 'tmp',
-        'thumbnail_dir': 'img'
+        'db_title': 'Software',
+        'output_filename': 'newdb2.xlsx',
+        'additional_indexes': '',
+        'local_file_dir': 'newdb2',
+        'thumbnail_dir': 'img',
+    }
+
+    settings_newdb5 = {
+        'url': 'https://invbrain.neuroinf.jp/',
+        'db_name': 'newdb5',
+        'db_title': 'Brain and Neurons/Silkmoth',
+        'output_filename': 'newdb5.xlsx',
+        'additional_indexes': '',
+        'local_file_dir': 'newdb5',
+        'thumbnail_dir': 'mor',
+    }
+    settings_newdb10 = {
+        'url': 'https://invbrain.neuroinf.jp/',
+        'db_name': 'newdb10',
+        'db_title': 'Sensory System',
+        'output_filename': 'newdb10.xlsx',
+        'additional_indexes': '',
+        'local_file_dir': 'newdb10',
+        'thumbnail_dir': 'img',
+    }
+
+    settings_newdb112 = {
+        'url': 'https://invbrain.neuroinf.jp/',
+        'db_name': 'newdb112',
+        'db_title': 'Brain and Neurons/Honeybee',
+        'output_filename': 'newdb112.xlsx',
+        'additional_indexes': '',
+        'local_file_dir': 'newdb112',
+        'thumbnail_dir': 'img',
+    }
+
+    settings_newdb9 = {
+        'url': 'https://invbrain.neuroinf.jp/',
+        'db_name': 'newdb9',
+        'db_title': 'Brain and Neurons/Cricket',
+        'output_filename': 'newdb9.xlsx',
+        'additional_indexes': '',
+        'local_file_dir': 'newdb9',
+        'thumbnail_dir': 'img',
+    }
+
+    settings_newdb12 = {
+        'url': 'https://invbrain.neuroinf.jp/',
+        'db_name': 'newdb12',
+        'db_title': 'Brain and Neurons/Fly',
+        'output_filename': 'newdb12.xlsx',
+        'additional_indexes': '',
+        'local_file_dir': 'newdb12',
+        'thumbnail_dir': 'img',
     }
 
     # choose settings
-    settings = settings_newdb1
+    settings = settings_newdb10
     # settings = settings_newdb2
 
     capi = CosmoAPIClient(settings['url'], settings['db_name'], debug=False)

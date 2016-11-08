@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import requests
+import urllib
 from xml.etree import ElementTree
 
 
@@ -54,8 +55,9 @@ class CosmoAPIClient:
         return r.text
 
     def get_thumbnail(self, uri, filename):
+        # print(uri + ': ' + urllib.parse.urlencode(uri))
         with open(filename, 'wb') as f:
-            raw = self.session.get(uri).content
+            raw = self.session.get(uri.replace('%', '%25')).content
             f.write(raw)
 
     def get_file(self, uri, filename):
