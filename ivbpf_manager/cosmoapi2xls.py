@@ -13,13 +13,13 @@ class XnpExcel:
     def __init__(self):
         self.wb = opx.Workbook()
         self.ws = self.wb.active
-        self.ws.title = 'data'
+        self.ws.title = 'CNS_Data'
 
         self.write_header()
         self.record_index = 2
 
     def write_header(self):
-        header = ['ID',
+        header_data = ['ID',
                   '言語',
                   'タイトル',
                   'フリーキーワード',
@@ -35,26 +35,61 @@ class XnpExcel:
                   'Rights',
                   'インデックス'
                   ]
+
+        header_cns = ['タイトル',
+                      '作成者',
+                      'DOI',
+                      '日付',
+                      '言語',
+                      'フリーキーワード',
+                      '概要',
+                      'プレビュー',
+                      '画像',
+                      'ファイル',
+                      'Rights',
+                      'URL',
+                      'インデックス',
+                      ]
+
+        header = header_cns
+
         for i, name in enumerate(header):
             self.ws.cell(column=i+1, row=1, value=name)
 
     def add_record(self, record):
-        item_list = ['doi',
-                     'langs',
-                     'title',
-                     'keywords',
-                     'description',
-                     'date',
-                     'data_type',
-                     'experimenters',
-                     'preview',
-                     'data_files',
-                     'download_limitation',
-                     'download_notification',
-                     'readme',
-                     'rights',
-                     'index'
-                     ]
+        item_list_data = ['doi',
+                         'langs',
+                         'title',
+                         'keywords',
+                         'description',
+                         'date',
+                         'data_type',
+                         'experimenters',
+                         'preview',
+                         'data_files',
+                         'download_limitation',
+                         'download_notification',
+                         'readme',
+                         'rights',
+                         'index'
+                         ]
+
+        item_list_cns = ['title',
+                         'creators',
+                         'doi',
+                         'date',
+                         'langs',
+                         'keywords',
+                         'description',
+                         'preview',
+                         'images',
+                         'data_files',
+                         'rights',
+                         'url',
+                         'index',
+                         ]
+
+        item_list = item_list_cns
 
         record_fix = []
         for item in item_list:
@@ -94,6 +129,7 @@ if __name__ == '__main__':
 
         # file/thumbnail
         thumbnail_file = u''
+        image_list = []
         file_list = []
         for thumbnail in detail_root[0].find('.//thumbnails'):
             dirname = os.path.join('.', settings['local_file_dir'], str(detail_root[0].attrib['data_id']))
@@ -112,22 +148,43 @@ if __name__ == '__main__':
                     os.makedirs(os.path.join(dirname, subdirname))
 
                 filename = os.path.join(dirname, subdirname, thumbnail.text.split('/')[-1])
-                file_list.append(filename)
+                image_list.append(filename)
                 if download_files:
                     capi.get_file(thumbnail.text, filename)
+
+        image_list = list(set(image_list))
+        images = ''
+        for image in image_list:
+            images += image + '\n'
+
+
+        # files
+        for item in detail_root[0].find('.//items').findall('.//item'):
+            if item.attrib['type'] == 'file':
+                file_list.append('file://'
+                                 + settings['server_file_dir']
+                                 + '/' + str(detail_root[0].attrib['data_id'])
+                                 + '/data'
+                                 + '/' + item.attrib['path']
+                                 + '/' + item.text)
+                print(file_list[-1])
 
         file_list = list(set(file_list))
         filepath = ''
         for path in file_list:
             filepath += path + '\n'
+
+        # ADHOC: apply for single file
+        '''
         if len(file_list) == 0:
             filepath = 'file:///data/dummy.txt'
         else:
-            filepath = file_list[0]
+            filepath = file_list[-1]
+        '''
 
 
         # experimenters
-        experimenters = detail_root.find('.//author').text
+        experimenters = detail_root[0].find('.//author').text
         if experimenters is None:
             experimenters = 'no data'
 
@@ -145,7 +202,6 @@ if __name__ == '__main__':
         keyword_list = list(set(keyword_list))
         for keyword in keyword_list:
             keyword_all += keyword + '\n'
-
 
 
         # indexes
@@ -166,18 +222,27 @@ if __name__ == '__main__':
             indexes += '/Private/'+index+'\n' + '/Public/'+index+'\n'
 
 
+        # url
+        url_list = []
+        urls = ''
+        url_list.append(detail_root[0].attrib['url'])
+        for url in url_list:
+            urls += url + '\n'
+
         # summarize
         record = {'title': title,
                   'keywords': keyword_all.rstrip('\n'),
                   'description': description,
                   'date': detail_root[0].find('.//date').text.replace('-', '/'),
                   'data_type': 'other',
-                  'experimenters': experimenters,
+                  'creators': experimenters,
                   'preview': thumbnail_file.replace('\\', '/').rstrip('\n'),
+                  'images': images.rstrip('\n'),
                   'data_files': filepath.replace('\\', '/').rstrip('\n'),
                   'download_limitation': 'FALSE',
                   'download_notification': 'FALSE',
                   'readme': 'README',
+                  'url': url.rstrip('\n'),
                   'rights': 'CC-BY',
                   'index': (indexes + settings['additional_indexes']).rstrip('\n')
                   }
@@ -190,7 +255,7 @@ if __name__ == '__main__':
     import db_settings
 
     # choose settings
-    settings = db_settings.settings_newdb12
+    settings = db_settings.settings_newdb5
     # settings = settings_newdb2
 
     capi = CosmoAPIClient(settings['url'], settings['db_name'], debug=False)

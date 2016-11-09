@@ -7,6 +7,7 @@ settings_newdb1 = {
     'additional_indexes': '',
     'local_file_dir': 'newdb1',
     'thumbnail_dir': 'img',
+    'server_file_dir': '/data.invbrain/www/html/modules/newdb1/extract',
 }
 
 settings_newdb2 = {
@@ -17,6 +18,7 @@ settings_newdb2 = {
     'additional_indexes': '',
     'local_file_dir': 'newdb2',
     'thumbnail_dir': 'img',
+    'server_file_dir': '/data.invbrain/www/html/modules/newdb2/extract',
 }
 
 settings_newdb5 = {
@@ -27,7 +29,9 @@ settings_newdb5 = {
     'additional_indexes': '/Private/Brain and Neurons\n/Public/Brain and Neurons\n',
     'local_file_dir': 'newdb5',
     'thumbnail_dir': 'mor',
+    'server_file_dir': '/data.invbrain/www/html/modules/newdb5/extract',
 }
+
 settings_newdb10 = {
     'url': 'https://invbrain.neuroinf.jp/',
     'db_name': 'newdb10',
@@ -36,6 +40,7 @@ settings_newdb10 = {
     'additional_indexes': '',
     'local_file_dir': 'newdb10',
     'thumbnail_dir': 'img',
+    'server_file_dir': '/data.invbrain/www/html/modules/newdb10/extract',
 }
 
 settings_newdb112 = {
@@ -46,6 +51,7 @@ settings_newdb112 = {
     'additional_indexes': '/Private/Brain and Neurons\n/Public/Brain and Neurons\n',
     'local_file_dir': 'newdb112',
     'thumbnail_dir': 'img',
+    'server_file_dir': '/data.invbrain/www/html/modules/newdb112/extract',
 }
 
 settings_newdb9 = {
@@ -56,6 +62,7 @@ settings_newdb9 = {
     'additional_indexes': '/Private/Brain and Neurons\n/Public/Brain and Neurons\n',
     'local_file_dir': 'newdb9',
     'thumbnail_dir': 'img',
+    'server_file_dir': '/data.invbrain/www/html/modules/newdb9/extract',
 }
 
 settings_newdb12 = {
@@ -66,6 +73,7 @@ settings_newdb12 = {
     'additional_indexes': '/Private/Brain and Neurons\n/Public/Brain and Neurons\n',
     'local_file_dir': 'newdb12',
     'thumbnail_dir': 'img',
+    'server_file_dir': '/data.invbrain/www/html/modules/newdb12/extract',
 }
 
 settings_newdb8 = {
@@ -76,6 +84,7 @@ settings_newdb8 = {
     'additional_indexes': '/Private/Brain and Neurons\n/Public/Brain and Neurons\n',
     'local_file_dir': 'newdb8',
     'thumbnail_dir': 'img',
+    'server_file_dir': '/data.invbrain/www/html/modules/newdb8/extract',
 }
 
 settings_newdb3 = {
@@ -86,6 +95,7 @@ settings_newdb3 = {
     'additional_indexes': '/Private/Brain and Neurons\n/Public/Brain and Neurons\n',
     'local_file_dir': 'newdb3',
     'thumbnail_dir': 'img',
+    'server_file_dir': '/data.invbrain/www/html/modules/newdb3/extract',
 }
 
 settings_newdb7 = {
@@ -96,14 +106,16 @@ settings_newdb7 = {
     'additional_indexes': '',
     'local_file_dir': 'newdb7',
     'thumbnail_dir': 'img',
+    'server_file_dir': '/data.invbrain/www/html/modules/newdb7/extract',
 }
 
 settings_newdb13 = {
     'url': 'https://invbrain.neuroinf.jp/',
     'db_name': 'newdb13',
-    'db_title': 'Glomerular Structures of Lepidopteran Insects',
+    'db_title': 'Glomerular Structures',
     'output_filename': 'newdb13.xlsx',
     'additional_indexes': '',
     'local_file_dir': 'newdb13',
     'thumbnail_dir': 'img',
+    'server_file_dir': '/data.invbrain/www/html/modules/newdb13/extract',
 }
