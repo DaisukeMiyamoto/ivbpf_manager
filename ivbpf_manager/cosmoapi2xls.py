@@ -121,7 +121,7 @@ if __name__ == '__main__':
         for path in file_list:
             filepath += path + '\n'
         if len(file_list) == 0:
-            filepath = 'dummy.txt'
+            filepath = 'file:///data/dummy.txt'
         else:
             filepath = file_list[0]
 
@@ -166,9 +166,6 @@ if __name__ == '__main__':
             indexes += '/Private/'+index+'\n' + '/Public/'+index+'\n'
 
 
-
-
-
         # summarize
         record = {'title': title,
                   'keywords': keyword_all.rstrip('\n'),
@@ -190,78 +187,10 @@ if __name__ == '__main__':
 
         return record
 
-    # Setting Templates
-    settings_newdb1 = {
-        'url': 'https://invbrain.neuroinf.jp/',
-        'db_name': 'newdb1',
-        'db_title': 'Brain Garalley',
-        'output_filename': 'newdb1.xlsx',
-        'additional_indexes': '',
-        'local_file_dir': 'newdb1',
-        'thumbnail_dir': 'img',
-    }
-
-    settings_newdb2 = {
-        'url': 'https://invbrain.neuroinf.jp/',
-        'db_name': 'newdb2',
-        'db_title': 'Software',
-        'output_filename': 'newdb2.xlsx',
-        'additional_indexes': '',
-        'local_file_dir': 'newdb2',
-        'thumbnail_dir': 'img',
-    }
-
-    settings_newdb5 = {
-        'url': 'https://invbrain.neuroinf.jp/',
-        'db_name': 'newdb5',
-        'db_title': 'Brain and Neurons/Silkmoth',
-        'output_filename': 'newdb5.xlsx',
-        'additional_indexes': '',
-        'local_file_dir': 'newdb5',
-        'thumbnail_dir': 'mor',
-    }
-    settings_newdb10 = {
-        'url': 'https://invbrain.neuroinf.jp/',
-        'db_name': 'newdb10',
-        'db_title': 'Sensory System',
-        'output_filename': 'newdb10.xlsx',
-        'additional_indexes': '',
-        'local_file_dir': 'newdb10',
-        'thumbnail_dir': 'img',
-    }
-
-    settings_newdb112 = {
-        'url': 'https://invbrain.neuroinf.jp/',
-        'db_name': 'newdb112',
-        'db_title': 'Brain and Neurons/Honeybee',
-        'output_filename': 'newdb112.xlsx',
-        'additional_indexes': '',
-        'local_file_dir': 'newdb112',
-        'thumbnail_dir': 'img',
-    }
-
-    settings_newdb9 = {
-        'url': 'https://invbrain.neuroinf.jp/',
-        'db_name': 'newdb9',
-        'db_title': 'Brain and Neurons/Cricket',
-        'output_filename': 'newdb9.xlsx',
-        'additional_indexes': '',
-        'local_file_dir': 'newdb9',
-        'thumbnail_dir': 'img',
-    }
-
-    settings_newdb12 = {
-        'url': 'https://invbrain.neuroinf.jp/',
-        'db_name': 'newdb12',
-        'db_title': 'Brain and Neurons/Fly',
-        'output_filename': 'newdb12.xlsx',
-        'additional_indexes': '',
-        'local_file_dir': 'newdb12',
-        'thumbnail_dir': 'img',
-    }
+    import db_settings
 
     # choose settings
-    settings = settings_newdb10
+    settings = db_settings.settings_newdb12
     # settings = settings_newdb2
 
     capi = CosmoAPIClient(settings['url'], settings['db_name'], debug=False)
