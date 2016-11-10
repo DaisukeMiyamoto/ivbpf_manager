@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import requests
-import urllib
 from xml.etree import ElementTree
 
 
@@ -64,7 +63,6 @@ class CosmoAPIClient:
         self.get_thumbnail(uri, filename)
 
 
-
 if __name__ == '__main__':
     url = 'https://invbrain.neuroinf.jp/'
     db_name = 'newdb1'
@@ -78,5 +76,3 @@ if __name__ == '__main__':
 
     detailtext = capi.get_detail(59)
     print(detailtext)
-
-

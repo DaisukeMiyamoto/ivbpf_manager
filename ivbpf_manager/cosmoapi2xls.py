@@ -10,6 +10,7 @@ class XnpExcel:
     """
     Export IVBPF (CosmoDB) data to Excel file for excel2xoonips
     """
+
     def __init__(self):
         self.wb = opx.Workbook()
         self.ws = self.wb.active
@@ -20,21 +21,20 @@ class XnpExcel:
 
     def write_header(self):
         header_data = ['ID',
-                  '言語',
-                  'タイトル',
-                  'フリーキーワード',
-                  '概要',
-                  '日付',
-                  'データタイプ',
-                  '実験者',
-                  'プレビューファイルパス',
-                  'データファイルパス',
-                  'ダウンロード制限',
-                  'ダウンロード通知',
-                  'README',
-                  'Rights',
-                  'インデックス'
-                  ]
+                       '言語',
+                       'タイトル',
+                       'フリーキーワード',
+                       '概要',
+                       '日付',
+                       'データタイプ',
+                       '実験者',
+                       'プレビューファイルパス',
+                       'データファイルパス',
+                       'ダウンロード制限',
+                       'ダウンロード通知',
+                       'README',
+                       'Rights',
+                       'インデックス']
 
         header_cns = ['タイトル',
                       '作成者',
@@ -48,31 +48,29 @@ class XnpExcel:
                       'ファイル',
                       'Rights',
                       'URL',
-                      'インデックス',
-                      ]
+                      'インデックス']
 
         header = header_cns
 
         for i, name in enumerate(header):
-            self.ws.cell(column=i+1, row=1, value=name)
+            self.ws.cell(column=i + 1, row=1, value=name)
 
     def add_record(self, record):
         item_list_data = ['doi',
-                         'langs',
-                         'title',
-                         'keywords',
-                         'description',
-                         'date',
-                         'data_type',
-                         'experimenters',
-                         'preview',
-                         'data_files',
-                         'download_limitation',
-                         'download_notification',
-                         'readme',
-                         'rights',
-                         'index'
-                         ]
+                          'langs',
+                          'title',
+                          'keywords',
+                          'description',
+                          'date',
+                          'data_type',
+                          'experimenters',
+                          'preview',
+                          'data_files',
+                          'download_limitation',
+                          'download_notification',
+                          'readme',
+                          'rights',
+                          'index']
 
         item_list_cns = ['title',
                          'creators',
@@ -86,8 +84,7 @@ class XnpExcel:
                          'data_files',
                          'rights',
                          'url',
-                         'index',
-                         ]
+                         'index']
 
         item_list = item_list_cns
 
@@ -101,12 +98,13 @@ class XnpExcel:
         print(record_fix)
 
         for i, name in enumerate(record_fix):
-            self.ws.cell(column=i+1, row=self.record_index, value=name)
+            self.ws.cell(column=i + 1, row=self.record_index, value=name)
 
         self.record_index += 1
 
     def save(self, xls_filename):
         self.wb.save(filename=xls_filename)
+
 
 if __name__ == '__main__':
 
@@ -116,14 +114,13 @@ if __name__ == '__main__':
         # print detailxml
         detail_root = ElementTree.fromstring(detailxml.encode('utf-8'))
 
-
         # label
         title = detail_root[0].find('.//label').text
         if title is None or title == ' ---':
             title = settings['db_title'] + str(detail_root[0].attrib['data_id'])
 
         # description
-        description = ''
+        description = u''
         if detail_root[0].find('.//comment') is not None and detail_root[0].find('.//comment').text is not None:
             description = detail_root[0].find('.//comment').text.rstrip()
 
@@ -153,45 +150,38 @@ if __name__ == '__main__':
                     capi.get_file(thumbnail.text, filename)
 
         image_list = list(set(image_list))
-        images = ''
+        images = u''
         for image in image_list:
             images += image + '\n'
-
 
         # files
         for item in detail_root[0].find('.//items').findall('.//item'):
             if item.attrib['type'] == 'file':
+                subpath = ''
+                if item.attrib['path'] != '':
+                    subpath = '/' + item.attrib['path']
+
                 file_list.append('file://'
                                  + settings['server_file_dir']
                                  + '/' + str(detail_root[0].attrib['data_id'])
                                  + '/data'
-                                 + '/' + item.attrib['path']
+                                 + subpath
                                  + '/' + item.text)
                 print(file_list[-1])
 
         file_list = list(set(file_list))
-        filepath = ''
+        filepath = u''
         for path in file_list:
             filepath += path + '\n'
-
-        # ADHOC: apply for single file
-        '''
-        if len(file_list) == 0:
-            filepath = 'file:///data/dummy.txt'
-        else:
-            filepath = file_list[-1]
-        '''
-
 
         # experimenters
         experimenters = detail_root[0].find('.//author').text
         if experimenters is None:
             experimenters = 'no data'
 
-
         # keywords
         keyword_list = []
-        keyword_all = ''
+        keyword_all = u''
         for metadata in detail_root[0].findall('.//component'):
             if metadata.text is not None and metadata.text != '':
                 keyword_list.append(metadata.attrib['name'] + ': ' + metadata.text.replace('\n', ''))
@@ -203,10 +193,9 @@ if __name__ == '__main__':
         for keyword in keyword_list:
             keyword_all += keyword + '\n'
 
-
         # indexes
         index_list = []
-        indexes = ''
+        indexes = u''
         index_list.append(settings['db_title'])
         for keyword in detail_root[0].find('.//keywords'):
             keyword_sep = keyword.text.split('/')
@@ -219,8 +208,7 @@ if __name__ == '__main__':
         index_list = list(set(index_list))
 
         for index in index_list:
-            indexes += '/Private/'+index+'\n' + '/Public/'+index+'\n'
-
+            indexes += '/Private/' + index + '\n' + '/Public/' + index + '\n'
 
         # url
         url_list = []
@@ -242,26 +230,26 @@ if __name__ == '__main__':
                   'download_limitation': 'FALSE',
                   'download_notification': 'FALSE',
                   'readme': 'README',
-                  'url': url.rstrip('\n'),
+                  'url': urls.rstrip('\n'),
                   'rights': 'CC-BY',
                   'index': (indexes + settings['additional_indexes']).rstrip('\n')
                   }
-
 
         print(record)
 
         return record
 
+
     import db_settings
 
     # choose settings
-    settings = db_settings.settings_newdb5
+    settings = db_settings.settings_newdb10
     # settings = settings_newdb2
 
     capi = CosmoAPIClient(settings['url'], settings['db_name'], debug=False)
-    listxml = capi.get_list()
+    list_xml = capi.get_list()
 
-    root = ElementTree.fromstring(listxml.encode('utf-8'))
+    root = ElementTree.fromstring(list_xml.encode('utf-8'))
 
     record_list = []
     thumbnail_list = []
