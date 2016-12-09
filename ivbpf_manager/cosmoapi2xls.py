@@ -230,6 +230,7 @@ if __name__ == '__main__':
 
         # summarize
         record = {'title': title,
+                  'doi': settings['doi_prefix'] + str(detail_root[0].attrib['data_id']),
                   'keywords': keyword_all.rstrip('\n'),
                   'description': description,
                   'date': detail_root[0].find('.//date').text.replace('-', '/'),

@@ -8,6 +8,7 @@ settings_newdb1 = {
     'local_file_dir': 'newdb1',
     'thumbnail_dir': 'img',
     'server_file_dir': '/data.invbrain/www/html/modules/newdb1/extract',
+    'doi_prefix': 'doi://10.14931/cns.1.',
 }
 
 settings_newdb2 = {
@@ -19,6 +20,7 @@ settings_newdb2 = {
     'local_file_dir': 'newdb2',
     'thumbnail_dir': 'img',
     'server_file_dir': '/data.invbrain/www/html/modules/newdb2/extract',
+    'doi_prefix': 'doi://10.14931/cns.2.',
 }
 
 settings_newdb5 = {
@@ -30,6 +32,7 @@ settings_newdb5 = {
     'local_file_dir': 'newdb5',
     'thumbnail_dir': 'mor',
     'server_file_dir': '/data.invbrain/www/html/modules/newdb5/extract',
+    'doi_prefix': 'doi://10.14931/cns.5.',
 }
 
 settings_newdb10 = {
@@ -41,6 +44,7 @@ settings_newdb10 = {
     'local_file_dir': 'newdb10',
     'thumbnail_dir': 'img',
     'server_file_dir': '/data.invbrain/www/html/modules/newdb10/extract',
+    'doi_prefix': 'doi://10.14931/cns.10.',
 }
 
 settings_newdb112 = {
@@ -52,6 +56,7 @@ settings_newdb112 = {
     'local_file_dir': 'newdb112',
     'thumbnail_dir': 'img',
     'server_file_dir': '/data.invbrain/www/html/modules/newdb112/extract',
+    'doi_prefix': 'doi://10.14931/cns.112.',
 }
 
 settings_newdb9 = {
@@ -63,6 +68,7 @@ settings_newdb9 = {
     'local_file_dir': 'newdb9',
     'thumbnail_dir': 'img',
     'server_file_dir': '/data.invbrain/www/html/modules/newdb9/extract',
+    'doi_prefix': 'doi://10.14931/cns.9.',
 }
 
 settings_newdb12 = {
@@ -74,6 +80,7 @@ settings_newdb12 = {
     'local_file_dir': 'newdb12',
     'thumbnail_dir': 'img',
     'server_file_dir': '/data.invbrain/www/html/modules/newdb12/extract',
+    'doi_prefix': 'doi://10.14931/cns.12.',
 }
 
 settings_newdb8 = {
@@ -85,6 +92,7 @@ settings_newdb8 = {
     'local_file_dir': 'newdb8',
     'thumbnail_dir': 'img',
     'server_file_dir': '/data.invbrain/www/html/modules/newdb8/extract',
+    'doi_prefix': 'doi://10.14931/cns.8.',
 }
 
 settings_newdb3 = {
@@ -96,6 +104,7 @@ settings_newdb3 = {
     'local_file_dir': 'newdb3',
     'thumbnail_dir': 'img',
     'server_file_dir': '/data.invbrain/www/html/modules/newdb3/extract',
+    'doi_prefix': 'doi://10.14931/cns.3.',
 }
 
 settings_newdb7 = {
@@ -107,6 +116,7 @@ settings_newdb7 = {
     'local_file_dir': 'newdb7',
     'thumbnail_dir': 'img',
     'server_file_dir': '/data.invbrain/www/html/modules/newdb7/extract',
+    'doi_prefix': 'doi://10.14931/cns.7.',
 }
 
 settings_newdb13 = {
@@ -118,4 +128,5 @@ settings_newdb13 = {
     'local_file_dir': 'newdb13',
     'thumbnail_dir': 'img',
     'server_file_dir': '/data.invbrain/www/html/modules/newdb13/extract',
+    'doi_prefix': 'doi://10.14931/cns.13.',
 }
