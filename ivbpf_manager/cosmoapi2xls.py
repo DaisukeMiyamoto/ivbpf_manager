@@ -48,7 +48,9 @@ class XnpExcel:
                       'ファイル',
                       'Rights',
                       'URL',
-                      'インデックス']
+                      'インデックス',
+                      'ダウンロード制限',
+                      'ダウンロード通知']
 
         header = header_cns
 
@@ -84,7 +86,9 @@ class XnpExcel:
                          'data_files',
                          'rights',
                          'url',
-                         'index']
+                         'index',
+                         'download_limitation',
+                         'download_notification']
 
         item_list = item_list_cns
 
@@ -167,7 +171,7 @@ if __name__ == '__main__':
                                  + '/data'
                                  + subpath
                                  + '/' + item.text)
-                print(file_list[-1])
+                # print(file_list[-1])
 
         file_list = list(set(file_list))
         filepath = u''
@@ -214,8 +218,15 @@ if __name__ == '__main__':
         url_list = []
         urls = ''
         url_list.append(detail_root[0].attrib['url'])
+        for link in detail_root[0].find('.//links').findall('.//link'):
+            url_list.append(link.attrib['href'])
+            if link.attrib['name'] is not None:
+                pass
+
         for url in url_list:
             urls += url + '\n'
+
+        print(urls)
 
         # summarize
         record = {'title': title,
@@ -243,7 +254,7 @@ if __name__ == '__main__':
     import db_settings
 
     # choose settings
-    settings = db_settings.settings_newdb10
+    settings = db_settings.settings_newdb1
     # settings = settings_newdb2
 
     capi = CosmoAPIClient(settings['url'], settings['db_name'], debug=False)
