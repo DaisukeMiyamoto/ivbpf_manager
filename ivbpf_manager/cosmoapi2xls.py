@@ -20,37 +20,24 @@ class XnpExcel:
         self.record_index = 2
 
     def write_header(self):
-        header_data = ['ID',
-                       '言語',
-                       'タイトル',
-                       'フリーキーワード',
-                       '概要',
-                       '日付',
-                       'データタイプ',
-                       '実験者',
-                       'プレビューファイルパス',
-                       'データファイルパス',
-                       'ダウンロード制限',
-                       'ダウンロード通知',
-                       'README',
-                       'Rights',
-                       'インデックス']
-
-        header_cns = ['タイトル',
-                      '作成者',
-                      'DOI',
-                      '日付',
-                      '言語',
-                      'フリーキーワード',
-                      '概要',
-                      'プレビュー',
-                      '画像',
-                      'ファイル',
-                      'Rights',
-                      'URL',
-                      'インデックス',
-                      'ダウンロード制限',
-                      'ダウンロード通知']
+        header_cns = [
+            'DOI',
+            'langs',
+            'title',
+            'creator name',
+            'creator affiliation',
+            'creation date',
+            'keyword',
+            'description',
+            'preview',
+            'data file',
+            'file description',
+            'rights',
+            'download limitation',
+            'download notification',
+            'index',
+            'url',
+        ]
 
         header = header_cns
 
@@ -58,37 +45,24 @@ class XnpExcel:
             self.ws.cell(column=i + 1, row=1, value=name)
 
     def add_record(self, record):
-        item_list_data = ['doi',
-                          'langs',
-                          'title',
-                          'keywords',
-                          'description',
-                          'date',
-                          'data_type',
-                          'experimenters',
-                          'preview',
-                          'data_files',
-                          'download_limitation',
-                          'download_notification',
-                          'readme',
-                          'rights',
-                          'index']
-
-        item_list_cns = ['title',
-                         'creators',
-                         'doi',
-                         'date',
-                         'langs',
-                         'keywords',
-                         'description',
-                         'preview',
-                         'images',
-                         'data_files',
-                         'rights',
-                         'url',
-                         'index',
-                         'download_limitation',
-                         'download_notification']
+        item_list_cns = [
+            'doi',
+            'langs',
+            'title',
+            'creators',
+            'creator_affiliation',
+            'date',
+            'keyword',
+            'description',
+            'preview',
+            'data_files',
+            'file_description',
+            'rights',
+            'download_limitation',
+            'download_notification',
+            'index',
+            'url',
+        ]
 
         item_list = item_list_cns
 
@@ -153,10 +127,12 @@ if __name__ == '__main__':
                 if download_files:
                     capi.get_file(thumbnail.text, filename)
 
+        image_list.append(thumbnail_file)
         image_list = list(set(image_list))
-        images = u''
+        # images = u''
+        filepath = u''
         for image in image_list:
-            images += image + '\n'
+            filepath += image + '\n'
 
         # files
         for item in detail_root[0].find('.//items').findall('.//item'):
@@ -174,7 +150,7 @@ if __name__ == '__main__':
                 # print(file_list[-1])
 
         file_list = list(set(file_list))
-        filepath = u''
+        # filepath = u''
         for path in file_list:
             filepath += path + '\n'
 
@@ -231,15 +207,16 @@ if __name__ == '__main__':
         # summarize
         record = {'title': title,
                   'doi': settings['doi_prefix'] + str(detail_root[0].attrib['data_id']),
+                  'langs': settings['langs'],
                   'keywords': keyword_all.rstrip('\n'),
                   'description': description,
                   'date': detail_root[0].find('.//date').text.replace('-', '/'),
                   'data_type': 'other',
                   'creators': experimenters,
                   'preview': thumbnail_file.replace('\\', '/').rstrip('\n'),
-                  'images': images.rstrip('\n'),
+                  # 'images': images.rstrip('\n'),
                   'data_files': filepath.replace('\\', '/').rstrip('\n'),
-                  'download_limitation': 'FALSE',
+                  'download_limitation': 'TRUE',
                   'download_notification': 'FALSE',
                   'readme': 'README',
                   'url': urls.rstrip('\n'),
@@ -251,28 +228,42 @@ if __name__ == '__main__':
 
         return record
 
+    def cosmoapi2xls(settings):
+        capi = CosmoAPIClient(settings['url'], settings['db_name'], debug=False)
+        list_xml = capi.get_list()
+
+        root = ElementTree.fromstring(list_xml.encode('utf-8'))
+
+        record_list = []
+        thumbnail_list = []
+
+        for child in root[1]:
+            record = detail2record(capi, int(child.attrib['data_id']), settings, download_files=True)
+            record_list.append(record)
+
+        xnpxls = XnpExcel()
+
+        for record in record_list:
+            xnpxls.add_record(record)
+
+        xnpxls.save(settings['output_filename'])
 
     import db_settings
 
     # choose settings
-    settings = db_settings.settings_newdb1
-    # settings = settings_newdb2
+    settings_list = [
+        db_settings.settings_newdb1,
+        db_settings.settings_newdb2,
+        db_settings.settings_newdb5,
+        db_settings.settings_newdb10,
+        db_settings.settings_newdb112,
+        db_settings.settings_newdb9,
+        db_settings.settings_newdb12,
+        db_settings.settings_newdb8,
+        db_settings.settings_newdb3,
+        db_settings.settings_newdb7,
+        db_settings.settings_newdb13,
+    ]
 
-    capi = CosmoAPIClient(settings['url'], settings['db_name'], debug=False)
-    list_xml = capi.get_list()
-
-    root = ElementTree.fromstring(list_xml.encode('utf-8'))
-
-    record_list = []
-    thumbnail_list = []
-
-    for child in root[1]:
-        record = detail2record(capi, int(child.attrib['data_id']), settings, download_files=True)
-        record_list.append(record)
-
-    xnpxls = XnpExcel()
-
-    for record in record_list:
-        xnpxls.add_record(record)
-
-    xnpxls.save(settings['output_filename'])
+    for setting in settings_list:
+        cosmoapi2xls(setting)
