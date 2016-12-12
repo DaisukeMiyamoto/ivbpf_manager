@@ -115,6 +115,7 @@ if __name__ == '__main__':
 
             if subdirname == settings['thumbnail_dir']:
                 thumbnail_file = os.path.join(dirname, thumbnail.text.split('/')[-1])
+                image_list.append(thumbnail_file)
                 if download_files:
                     capi.get_file(thumbnail.text, thumbnail_file)
 
@@ -127,7 +128,6 @@ if __name__ == '__main__':
                 if download_files:
                     capi.get_file(thumbnail.text, filename)
 
-        image_list.append(thumbnail_file)
         image_list = list(set(image_list))
         # images = u''
         filepath = u''
@@ -247,6 +247,7 @@ if __name__ == '__main__':
             xnpxls.add_record(record)
 
         xnpxls.save(settings['output_filename'])
+
 
     import db_settings
 
