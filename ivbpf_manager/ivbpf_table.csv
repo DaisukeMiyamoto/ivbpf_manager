@@ -1,0 +1,129 @@
+1,Arborization Area,1
+2,AL,8
+3,G,9
+4,MGC,16
+5,Cumulus,17
+6,Horseshoe,18
+7,Toroid,19
+8,CC,20
+9,LAL,21
+10,LPC,22
+11,MB,23
+12,Calyx,26
+13,alpha lobe,24
+14,beta lobe,25
+15,OL,27
+16,Posterior Optic Foci,28
+17,SOG,29
+18,VPC,30
+19,Neuron Type,2
+20,AL-LN,33
+21,AL-PN,38
+22,Group I,34
+23,Group II,43
+24,Group III,48
+25,KC,49
+26,LAL-bilateral,50
+27,LAL-local,51
+28,LPC_LN,52
+29,Motor,53
+30,OL_PN,54
+31,Neurosecretary Cell,55
+32,Sensory,58
+33,Cell Body Position,3
+34,LAL Cell cluster,61
+35,LAL medial,62
+36,LPC,63
+37,OL,64
+38,SOG,65
+39,KC,66
+40,AL-LC,67
+41,AL-MC,68
+42,Group I,69
+43,Group II,70
+44,Group III,71
+45,Dye,4
+46,Alexa488,74
+47,Alexa568,75
+48,Cy3,76
+49,Cy5,77
+50,Lucifer Yellow,78
+51,Physiology,5
+52,Drug,80
+53,Bicuculine,81
+54,Octopamine,82
+55,serotonin,83
+56,Mechano,84
+57,Clean air,85
+58,Olfactory,86
+59,Bombykol,87
+60,Bombykal,88
+61,Female extract,89
+62,Hexanal,90
+63,Hexanol,91
+64,Mixture,92
+65,Visual,101
+66,Constant Light On-Off,102
+67,Movement,103
+68,Histology,6
+69,Amira,105
+70,AL,8
+71,CC,20
+72,MB,108
+73,Background,109
+74,Alexa568,75
+75,Lucifer Yellow,125
+76,Immunocytochemical,112
+77,cGMP,113
+78,FMRFamide,114
+80,GABA,115
+81,Glutamate,116
+82,Serotonin,117
+83,Mass,120
+84,Osmium,121
+85,Elyl Gallate,122
+86,Silver,123
+87,Other,7
+88,One Set Data,126
+90,type I,34
+91,type II,35
+92,type III,36
+93,type IV,37
+97,A,12
+98,AD,11
+99,AV,10
+100,PD,13
+101,P,14
+107,AL-AC,73
+108,cis-3-hexen-1-ol,93
+109,trans-2-hexenal,94
+110,linalool,95
+111,citral,96
+112,benzaldehyde,97
+113,p-cresol,98
+114,caproic acid,99
+115,octanol,100
+116,type a,40
+117,type b,41
+118,type c,42
+119,type a,44
+120,type b,45
+121,type c,46
+122,type d,47
+129,Histamine,1118
+130,Tyramine,119
+131,serotonin_ALfeedback,60
+132,others,124
+133,others,59
+134,others,72
+135,others,79
+136,others,104
+137,others,31
+138,V,15
+139,AMMC,32
+140,PTTH,56
+141,bombyxin,57
+142,Alexa555,127
+143,Reconstruction,0
+144,Avizo,0
+145,SMPC,0
