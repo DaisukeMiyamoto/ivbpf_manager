@@ -26,8 +26,9 @@ class PfManager:
         self.show_result = False
         self.keyword_table = {}
 
-        passfile = open(self.PASSWORD_FILE, 'r')
-        self.login_info['pass'] = passfile.read()
+        with open(self.PASSWORD_FILE, 'r') as passfile:
+            self.login_info['pass'] = passfile.read()
+
         self._login()
 
         if keyword_table_file != '':
