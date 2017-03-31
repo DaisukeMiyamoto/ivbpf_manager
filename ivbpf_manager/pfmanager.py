@@ -55,9 +55,11 @@ class PfManager:
             'method': 'do_reg'
         }
         print(data)
-        files = {
-            'thumbfile': (thumbname, open(thumbpath, 'rb'), 'image/png'),
-        }
+        if thumbpath:
+            files = {'thumbfile': (thumbname, open(thumbpath, 'rb'), 'image/png'),}
+        else:
+            files = {}
+
         r = self.session.post(self.base_url + 'modules/' + self.db_name + self.REGISTER_URL, data=data, files=files)
 
         if r.status_code != 200:
@@ -176,8 +178,9 @@ if __name__ == '__main__':
     # for i in range(574, 730):
     #    ivbpfm.del_record(i)
 
-    # dbid = '1355'
-    # exec_one_record(pfm, ivbpfm, dbid)
+    dbid = '917'
+    exec_one_record(pfm, ivbpfm, dbid)
 
     # filename = '/home/nebula/work/ivbpf/upload20160224_2.txt'
+    # filename = 'upload_bond_to_ivbpf_20170331.txt'
     # exec_by_file(pfm, ivbpfm, filename)
